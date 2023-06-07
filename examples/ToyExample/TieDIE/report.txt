@@ -1,0 +1,5 @@
+1.0	of source nodes3 out of 3
+1.0	of target nodes3 out of 3
+And 1 connecting nodes
+Compactness Score:0.983333333333
+P-value: 1.0 (with 1000 random permutations)

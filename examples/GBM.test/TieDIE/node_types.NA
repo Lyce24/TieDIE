@@ -1,0 +1,17 @@
+NodeTypes
+FOXO = 0
+CDKN1B = 0
+CDKN1A = 1
+INK4 = 0
+AKT = 0
+FOXO3 = 1
+AKT1 = 1
+FOXO1 = 0
+AKT3 = 1
+cell_cycle_progression = -1
+P16 = 1
+FOXO4 = 0
+CCND-CDK4_complex = 0
+MDM2 = 0
+CCND-CDK6_complex = 0
+ERK = 0
