@@ -1,0 +1,4 @@
+  python==2.7
+  networkx==1.11
+  numpy==1.11
+  scipy==0.18
