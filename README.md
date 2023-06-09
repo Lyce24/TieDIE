@@ -1,81 +1,46 @@
-TieDIE: Tied Diffusion for Subnetwork Discovery. 
-========
+## Modified TieDIE Algorithm
 
-Current Version 
---------
+This repository contains a modified version of the TieDIE Algorithm, originally designed by Evan Paull and others. The purpose of this modification is to address a bug related to the failure of running the `pagerank` method in the original implementation. Additionally, this repository includes a `requirements.txt` file and an `environment.yml` file to facilitate the setup of a virtual environment for running the algorithm.
 
-1.0
-	
-Authors
---------
+## Bug Fix
 
-Evan O. Paull, Daniel Carlin and Joshua M. Stuart.
+In the original implementation of the TieDIE Algorithm, there was a bug that caused the `pagerank` method to fail. This bug prevented the proper execution of the method, leading to unexpected results and potential errors in downstream processes. The bug was specifically related to the lack of indentation in lines 319-323 of the `/bin/tiedie` file.
 
-Additional Contributors
---------
+## Modification Details
 
-Srikanth Bezawada (TieDIE Cytoscape Plugin)
-Josh L. Espinoza (Quick kernel loading feature)
-Dana Silverbush (MATLAB kernel generation code updates to newer versions)
+To fix the bug in the TieDIE Algorithm, the following changes were made:
 
-Requirements
---------
+1. Open the `/bin/tiedie` file in a text editor.
+2. Navigate to lines 319-323.
+3. Add proper indentation to these lines.
 
-Python 2.7 and the python numpy module are required to run the tiedie 
-executable, when using a pre-computed diffusion kernel. 
+The modified lines (line 305 -323 of the `/bin/tiedie` file) should look as follows:
 
-Either MATLAB or the python scipy module, version 0.12 or later, is 
-required for diffusion kernel computation: the latter is free, though
-not as computationally efficient as the MATLAB implementation.
+```python (bin)
+if opts.pagerank:
+	# use PageRank to diffuse heats: create a diffuser object to perform this step
+	diffuser = PPrDiffuser(network)
+else:
+	if opts.kernel is not None:
+		sys.stderr.write("Loading Heat Diffusion Kernel..\n")
+		# load a heat diffusion kernel to perform diffusion
+		diffuser = Kernel(opts.kernel)
+	else:
+		sys.stderr.write("Using SCIPY to compute the matrix exponential, t=0.1...\n")
+		# No kernel supplied: use SCIPY to generate a kernel on the fly, and then use it
+		# for subsequent diffusion operations
+		diffuser = SciPYKernel(opts.network)
 
-* [python 2.7](http://www.python.org/): all modules.
-   * [scipy](http://www.scipy.org/): >= 0.12.0 kernel generation
-   * [numpy](http://numpy.scipy.org/)
-   * [networkx](http://networkx.github.io/)
-* [MATLAB](http://www.mathworks.com/products/matlab/): kernel generation
+	# Check to make sure the node universe matches the
+	k_labels = diffuser.getLabels()
+	if len(network_nodes) != len(k_labels) or len(network_nodes.intersection(k_labels)) != len(k_labels):
+		sys.stderr.write("Error: the universe of gene/node labels in the network file doesn't match the supplied kernel file!\n")
+		sys.exit(1)
 
-Installation
--------
+```
 
-- Install dependencies
-- Download the TieDIE repository to the desired location
-- (Recommended) Pre-Generate kernel file with MATLAB (bin/makeKernel.sh)
-- Run TieDIE/bin/tiedie
+These changes ensure the correct execution of the `pagerank` method and resolve the issue that caused it to fail in the original implementation.
 
-Examples
--------
-- **GBM.test** An example signaling network from Glioblastoma (TCGA Network, 2012) is provided, along with input heats 
-for an upstream set of genes (mutated genes) and a downstream set of nodes (transcriptional responses). To run:
+## Acknowledgments
 
-	cd examples/GBM.test
-	make
-
-A tutorial for this simple example is provided in doc/Tutorial.pdf. 
-
-Programs
--------
-
-- **tiedie** Python executable to run the TieDIE algorithm. 
-- **makeKernel.sh** Shell script executable that calls MATLAB for diffusion kernel file generation.
-- (Auxillary) **span.R** An R-implementation of the Prize Collecting Steiner Tree network formulation, that calls 
-the BioNet package. 
-
-Folders
-------
-* bin : executables and matlab source files
-* lib : python code libraries for the tiedie executable
-* test : doctest unit tests, functional tests and regression tests
-* examples : GBM and BRCA inputs for demonstration purposes
-* galaxy : Galaxy web-server wrapper for tiedie to run through the web interface. (https://main.g2.bx.psu.edu/)
-* pathways : the "superpathway" described in the TieDIE paper, used with the TCGA BRCA dataset
-
-In Press
-------
-TieDIE was first featured in the 2013 Nature paper "Comprehensive molecular characterization of clear cell renal cell carcinoma". In this TCGA (The Cancer Genome Atlas) network publication, a TieDIE analysis was used to connnect frequently mutated genes involving the SWI/SNF chromatin remodelling complex to a diverse set of gene expression changes characteristic of tumor development and progression. The TieDIE manuscript was not yet published at the time of the Nature publication and so is cited by name and author only. The TieDIE network solution is shown in figure 4 of the main text, which can be found at this link: http://www.nature.com/nature/journal/v499/n7456/full/nature12222.html . 
-
-
-
-Contact
-------
-Feature requests, comments and requests for clarification should all be sent to the author at <epaull@soe.ucsc.edu>. 
-I will try to respond quickly to all requests, so feel free to email me!
+The original [TieDIE Algorithm](https://github.com/epaull/TieDIE) was designed by Evan Paull and others. We acknowledge their contributions and appreciate their work.
